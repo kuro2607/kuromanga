@@ -97,7 +97,7 @@ input,select{font-size:16px}
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const NET=[{n:'KuroWatch',u:'https://kuro2607.github.io/kuro/'},{n:'KuroNews',u:'https://kuro2607.github.io/kuronews/'},{n:'KuroManga',u:'https://kuro2607.github.io/kuromanga/'}];
+const NET=[{n:'KuroWatch',u:'https://kuro2607.github.io/kuro.watch/'},{n:'KuroNews',u:'https://kuro2607.github.io/kuronews/'},{n:'KuroManga',u:'https://kuro2607.github.io/kuromanga/'}];
 $('#net').innerHTML=NET.map(x=>`<a class="chip" href="${x.u}">${x.n}</a>`).join('');
 
 $('#note').textContent='KuroManga is a discovery and tracking site. It does not host or display chapters. Each series links to official places to read it.';
@@ -164,7 +164,7 @@ async function openDetail(id){
        <div class="flex flex-wrap gap-1.5">${(a.genres||[]).map(g=>`<span class="chip" style="min-height:0">${esc(g)}</span>`).join('')}</div></div></div>
      <p class="text-sm leading-relaxed mt-4 text-[#cfdccb]">${esc(strip(a.description)||'No synopsis available yet.')}</p>
      <h3 class="font-bold mt-5 mb-2">Read officially</h3><div class="flex flex-wrap gap-2">${links}${fixed}</div>
-     ${anime?`<h3 class="font-bold mt-5 mb-2">Anime adaptation</h3><a class="btn text-sm" href="https://kuro2607.github.io/kuro/?q=${encodeURIComponent(anime.node.title.english||anime.node.title.romaji)}">Find it on KuroWatch</a>`:''}
+     ${anime?`<h3 class="font-bold mt-5 mb-2">Anime adaptation</h3><a class="btn text-sm" href="https://kuro2607.github.io/kuro.watch/?q=${encodeURIComponent(anime.node.title.english||anime.node.title.romaji)}">Find it on KuroWatch</a>`:''}
      ${rel.length?`<h3 class="font-bold mt-5 mb-2">Related series</h3><div class="flex gap-3 overflow-x-auto pb-2">${rel.map(r=>`<button onclick="openDetail(${r.id})" class="shrink-0 w-24 text-left"><img loading="lazy" src="${esc(r.coverImage.medium)}" alt="" class="rounded-lg aspect-[3/4] object-cover w-full border border-[#1d2a1d]"><p class="text-xs font-bold c2 mt-1">${esc(r.title.english||r.title.romaji)}</p></button>`).join('')}</div>`:''}
      <h3 class="font-bold mt-5 mb-2">Track it</h3><div class="flex flex-wrap items-center gap-2" id="track">${trackUI()}</div>`;
   }catch(e){$('#mb').innerHTML=`<p class="p-4">Could not load this series (${esc(e.message)}). <button class="btn2" onclick="closeModal()">Close</button></p>`}
