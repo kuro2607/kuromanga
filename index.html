@@ -56,7 +56,11 @@ input,select{font-size:16px}
 <section id="v-free" class="hidden">
  <h1 class="text-2xl font-extrabold title-glow mb-1">Read free, legally</h1>
  <p class="text-sm text-[#9fb39a] mb-4">Official reader sites with free chapters, plus public-domain novels you can open and read.</p>
+ <div class="flex flex-wrap items-center gap-2 mb-3"><label for="rlang" class="text-sm text-[#9fb39a]">Language</label><select id="rlang" onchange="renderReaders()" class="bg-black border border-[#1d2a1d] rounded-lg px-3 py-2"></select><span class="text-xs text-[#9fb39a]">Languages and prices can change. Check each site.</span></div>
  <div id="readers" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8"></div>
+ <h2 class="text-xl font-extrabold mb-1">Creator-published free comics</h2>
+ <p class="text-xs text-[#9fb39a] mb-3">Free to read because the artists and publishers put them online themselves. The language menu above filters this list too.</p>
+ <div id="creators" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8"></div>
  <h2 class="text-xl font-extrabold mb-1">Reader: your own files</h2>
  <p class="text-xs text-[#9fb39a] mb-3">Open comic archives (.cbz or .zip) or image files from your device and read them here in manga or webtoon style. Files stay on your device.</p>
  <div class="flex flex-wrap gap-2 items-center mb-3">
@@ -144,9 +148,9 @@ let cur=null;
 async function openDetail(id){
   const m=$('#modal');m.classList.remove('hidden');m.scrollTop=0;$('#mb').innerHTML='<p class="p-6 text-[#9fb39a]">Loading...</p>';
   try{
-    const a=(await gql(`query($i:Int){Media(id:$i,type:MANGA){${F} description(asHtml:false) externalLinks{site url type} relations{edges{relationType node{id type format title{romaji english} coverImage{medium}}}}}}`,{i:id})).Media;
+    const a=(await gql(`query($i:Int){Media(id:$i,type:MANGA){${F} description(asHtml:false) externalLinks{site url type language} relations{edges{relationType node{id type format title{romaji english} coverImage{medium}}}}}}`,{i:id})).Media;
     cur=a;const t=nm(a),en=encodeURIComponent(t);
-    const links=(a.externalLinks||[]).filter(l=>l.type==='STREAMING'&&/^https?:/.test(l.url)).map(l=>`<a class="btn2 text-sm" target="_blank" rel="noopener noreferrer" href="${esc(l.url)}">${esc(l.site)}</a>`).join('');
+    const links=(a.externalLinks||[]).filter(l=>l.type==='STREAMING'&&/^https?:/.test(l.url)).map(l=>`<a class="btn2 text-sm" target="_blank" rel="noopener noreferrer" href="${esc(l.url)}">${esc(l.site)}${l.language?' ('+esc(l.language)+')':''}</a>`).join('');
     const fixed=`<a class="btn2 text-sm" target="_blank" rel="noopener noreferrer" href="https://mangaplus.shueisha.co.jp/search_result?keyword=${en}">Search MANGA Plus</a>
       <a class="btn2 text-sm" target="_blank" rel="noopener noreferrer" href="https://www.viz.com/search?search=${en}">Search VIZ</a>
       <a class="btn2 text-sm" target="_blank" rel="noopener noreferrer" href="https://global.bookwalker.jp/search/?word=${en}">Search BookWalker</a>`;
@@ -206,18 +210,32 @@ function mergeRemote(d){
 const getList=()=>list;
 
 /* free and legal reading */
+const EN=['English'];
 const READERS=[
- ['MANGA Plus','Free chapters of Shueisha series, same day as Japan.','https://mangaplus.shueisha.co.jp'],
- ['WEBTOON','Free vertical-scroll comics and webcomics.','https://www.webtoons.com'],
- ['Tapas','Free webcomics and web novels.','https://tapas.io'],
- ['Comikey','Official manga with free chapters.','https://comikey.com'],
- ['VIZ Media','Free first chapters and the Shonen Jump library.','https://www.viz.com'],
- ['K MANGA','Kodansha official manga reader.','https://kmanga.kodansha.com'],
- ['Azuki','Licensed manga with free chapters.','https://www.azuki.co'],
- ['BookWalker','Official light novels and manga store.','https://global.bookwalker.jp']];
+ ['MANGA Plus','Free chapters of Shueisha series, same day as Japan. Some series are paid.','Free',['English','Spanish','French','Indonesian','Portuguese','Russian','Thai','German','Vietnamese'],'https://mangaplus.shueisha.co.jp'],
+ ['WEBTOON','Free daily episodes of webcomics and manhwa.','Free + paid',['English','Spanish','French','German','Indonesian','Thai','Chinese'],'https://www.webtoons.com'],
+ ['Tapas','Webcomics and web novels with free episodes.','Free + paid',EN,'https://tapas.io'],
+ ['Comikey','Official manga with free chapters.','Free + paid',EN,'https://comikey.com'],
+ ['VIZ Media','Free first chapters and the Shonen Jump library.','Free + paid',EN,'https://www.viz.com'],
+ ['K MANGA','Kodansha official manga reader.','Free + paid',EN,'https://kmanga.kodansha.com'],
+ ['Azuki','Licensed manga with free chapters.','Free + paid',EN,'https://www.azuki.co'],
+ ['BookWalker','Official light novels and manga store.','Paid',['English','Japanese'],'https://global.bookwalker.jp']];
+const CREATORS=[
+ ['Pepper&Carrot','A fantasy comic with a manga-inspired look. It is open source, so fans can legally translate it into new languages.','Free (CC-BY)',['English','French','Spanish','German','Italian','Portuguese','Russian','Japanese','Korean','Chinese','Indonesian'],'https://www.peppercarrot.com'],
+ ['WEBTOON Canvas','Free webcomics from independent creators, in several languages.','Free',['English','Spanish','French','German','Indonesian','Thai','Chinese'],'https://www.webtoons.com/en/canvas'],
+ ['MANGA Plus Creators','Free one-shots and debut works from new manga artists.','Free',['Japanese','English'],'https://mangaplus-creators.jp'],
+ ['Shonen Jump+','Shueisha official free manga site, with new chapters every day.','Free + paid',['Japanese'],'https://shonenjumpplus.com'],
+ ['ComicWalker','Kadokawa official free manga reader.','Free + paid',['Japanese'],'https://comic-walker.com'],
+ ['Gunnerkrigg Court','A long-running English webcomic, free to read on the creator\'s own site.','Free',['English'],'https://www.gunnerkrigg.com']];
+const rcard=r=>`<a class="card panel rounded-xl p-4 block" target="_blank" rel="noopener noreferrer" href="${r[4]}"><div class="flex items-center justify-between gap-2"><h3 class="font-bold">${esc(r[0])}</h3><span class="chip" style="min-height:0">${esc(r[2])}</span></div><p class="text-xs text-[#9fb39a] mt-1">${esc(r[1])}</p><p class="text-xs text-green-400 mt-2">${esc(r[3].join(', '))}</p></a>`;
+function renderReaders(){
+  const L=$('#rlang').value,pick=a=>a.filter(r=>!L||r[3].includes(L)).map(rcard).join('')||'<p class="text-[#9fb39a]">Nothing listed for that language yet.</p>';
+  $('#readers').innerHTML=pick(READERS);$('#creators').innerHTML=pick(CREATORS);
+}
 function initFree(){
-  $('#readers').innerHTML=READERS.map(r=>`<a class="card panel rounded-xl p-4 block" target="_blank" rel="noopener noreferrer" href="${r[2]}"><h3 class="font-bold">${esc(r[0])}</h3><p class="text-xs text-[#9fb39a] mt-1">${esc(r[1])}</p></a>`).join('');
-  loadBooks('');findIA();
+  const langs=[...new Set([...READERS,...CREATORS].flatMap(r=>r[3]))].sort();
+  $('#rlang').innerHTML='<option value="">Any language</option>'+langs.map(l=>`<option>${l}</option>`).join('');
+  renderReaders();loadBooks('');findIA();
 }
 function findBooks(e){e.preventDefault();loadBooks($('#bq').value.trim())}
 async function loadBooks(qs){
