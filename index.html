@@ -5,7 +5,9 @@
 <link rel="canonical" href="https://kuro2607.github.io/kuromanga/">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website"><meta property="og:title" content="KuroManga - Discover and track manga, manhwa and novels"><meta property="og:description" content="Search manga, manhwa and light novels, see where to read them officially, and track your reading progress."><meta property="og:url" content="https://kuro2607.github.io/kuromanga/">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-40 -40 80 80'>
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+<link rel="icon" type="image/x-icon" sizes="48x48" href="favicon.ico">
+<link rel="apple-touch-icon" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
 <style>*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#1d2a1d}html{line-height:1.5;-webkit-text-size-adjust:100%}body{margin:0;line-height:inherit}h1,h2,h3,h4,p,figure{margin:0}h1,h2,h3,h4{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}button,input,select,textarea{font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}button{background:transparent;cursor:pointer}select{background:transparent}input::placeholder{color:#6b7f67}img,svg,video,canvas{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]{display:none}
 
@@ -97,7 +99,7 @@ input,select{font-size:16px}
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const NET=[{n:'KuroWatch',u:'https://kuro2607.github.io/kuro.watch/'},{n:'KuroNews',u:'https://kuro2607.github.io/kuronews/'},{n:'KuroManga',u:'https://kuro2607.github.io/kuromanga/'}];
+const NET=[{n:'KuroHub',u:'https://kuro2607.github.io/hub/'},{n:'KuroWatch',u:'https://kuro2607.github.io/kuro.watch/'},{n:'KuroNews',u:'https://kuro2607.github.io/kuronews/'},{n:'KuroManga',u:'https://kuro2607.github.io/kuromanga/'}];
 $('#net').innerHTML=NET.map(x=>`<a class="chip" href="${x.u}">${x.n}</a>`).join('');
 
 $('#note').textContent='KuroManga is a discovery and tracking site. It does not host or display chapters. Each series links to official places to read it.';
